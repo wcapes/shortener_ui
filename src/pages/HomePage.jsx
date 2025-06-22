@@ -12,8 +12,11 @@ import {
   Statistic,
   List,
   Typography,
+  notification,
   Badge,
+  Select
 } from "antd";
+
 import {
   LinkOutlined,
   UserOutlined,
@@ -58,6 +61,13 @@ echarts.use([
   CanvasRenderer,
 ]);
 
+const { Option } = Select;
+const USER_TYPES = [
+  { label: 'User', value: 'USER' },
+  { label: 'Business', value: 'BUSINESS' },
+  { label: 'Enterprise', value: 'ENTERPRISE' },
+];
+
 export default function HomePage() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [activeTab, setActiveTab] = useState("register");
@@ -66,6 +76,7 @@ export default function HomePage() {
   const [url, setUrl] = useState("");
   const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
   const navigate = useNavigate();
+  const [form] = Form.useForm();
 
   const showModal = (tab) => {
     setActiveTab(tab);
@@ -78,7 +89,14 @@ export default function HomePage() {
 
   const handleShortenUrl = async () => {
     console.log("Starting");
-    if (!url) return;
+    if (!url || !isValidUrl(url)) {
+      notification.error({
+        message: "Invalid URL",
+        description: "Please enter a valid URL before shortening.",
+        placement: "topRight",
+      });
+      return;
+    }
     setIsLoading(true);
     console.log(apiBaseUrl);
 
@@ -131,9 +149,14 @@ export default function HomePage() {
     setIsLoading(false);
   };
 
-
-
-
+  function isValidUrl(string) {
+    try {
+      new URL(string);
+      return true;
+    } catch (_) {
+      return false;  
+    }
+  }
 
   const handleCopy = () => {
     if (shortenedUrl) {
@@ -473,37 +496,45 @@ export default function HomePage() {
                 </Form.Item>
               </Form>
             </TabPane>
+
+
             <TabPane tab="Register" key="register">
               <Form layout="vertical" className="mt-4">
-                <Form.Item
-                  label="Email"
-                  name="email"
-                  rules={[
-                    { required: true, message: "Please input your email!" },
-                    { type: "email", message: "Please enter a valid email!" },
-                  ]}
-                >
-                  <Input
-                    prefix={<MailOutlined className="text-gray-400" />}
-                    placeholder="Enter your email"
-                  />
+                {/* Register Email */}
+                <Form.Item  label="Email" name="email"
+                            rules={[  { required: true, message: "Please input your email!" },
+                                      { type: "email", message: "Please enter a valid email!" },]}>
+                  <Input  prefix={<MailOutlined className="text-gray-400" />}
+                          placeholder="Enter your email"/>
                 </Form.Item>
-                <Form.Item
-                  label="Password"
-                  name="password"
-                  rules={[
-                    { required: true, message: "Please input your password!" },
-                    {
-                      min: 8,
-                      message: "Password must be at least 8 characters!",
-                    },
-                  ]}
-                >
-                  <Input.Password
-                    prefix={<LockOutlined className="text-gray-400" />}
-                    placeholder="Create a password"
-                  />
+
+                {/* Register Password */}
+                <Form.Item  label="Password" name="password"
+                            rules={[  { required: true, message: "Please input your password!" },
+                                      { min: 8, message: "Password must be at least 8 characters!",}]}>
+                  <Input.Password prefix={<LockOutlined className="text-gray-400" />}
+                                  placeholder="Create a password"/>
                 </Form.Item>
+
+
+                <Form.Item  label="User Type"
+                            name="userType"
+                            rules={[{ required: true, message: 'Please select a user type!' }]}>
+                  <Select placeholder="Select a user type">
+                    {USER_TYPES.map(type => (
+                    <Option key={type.value} value={type.value}>
+                      {type.label}
+                    </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+
+      <Form.Item>
+        <Button type="primary" htmlType="submit" block>
+          Register
+        </Button>
+      </Form.Item>
+
                 <div className="mb-4 p-3 bg-gray-50 rounded-md text-sm text-gray-600">
                   <p className="font-medium mb-2">Password must contain:</p>
                   <ul className="space-y-1">

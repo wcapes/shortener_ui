@@ -1,10 +1,18 @@
 import React, { useState } from "react";
-import { Form, Input, Button, Alert, Typography } from "antd";
+import { Form, Input, Button, Alert, Typography, Select } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
 
 const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{10,}$/;
+
+const { Option } = Select;
+
+const USER_TYPES = [
+  { label: 'User', value: 'USER' },
+  { label: 'Business', value: 'BUSINESS' },
+  { label: 'Enterprise', value: 'ENTERPRISE' },
+];
 
 export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
@@ -85,7 +93,7 @@ export default function RegisterPage() {
             ]}
             hasFeedback
           >
-            <Input.Password prefix={<LockOutlined />} placeholder="Create a password" />
+          <Input.Password prefix={<LockOutlined />} placeholder="Create a password" />
           </Form.Item>
           <Form.Item
             label="Confirm Password"
@@ -104,7 +112,11 @@ export default function RegisterPage() {
               }),
             ]}
           >
-            <Input.Password prefix={<LockOutlined />} placeholder="Repeat your password" />
+          <Input.Password prefix={<LockOutlined />} placeholder="Repeat your password" />
+          
+          
+
+
           </Form.Item>
           <div className="mb-4 p-3 bg-gray-50 rounded-md text-sm text-gray-600">
             <p className="font-medium mb-2">Password must contain:</p>
@@ -126,6 +138,7 @@ export default function RegisterPage() {
               Register
             </Button>
           </Form.Item>
+
         </Form>
         <div className="text-center">
           <a href="/login" className="text-indigo-600 hover:text-indigo-800">Already have an account? Log In</a>

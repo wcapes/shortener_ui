@@ -78,6 +78,15 @@ export default function HomePage() {
   const navigate = useNavigate();
   const [form] = Form.useForm();
 
+  const passwordRules = [
+    { required: true, message: "Please input your password!" },
+    { min: 8, message: "Password must be at least 8 characters." },
+    {
+      pattern: /^(?=.*[A-Z])(?=.*\d).+$/,
+      message: "Password must include at least one uppercase letter and one number.",
+    },
+  ];
+
   const showModal = (tab) => {
     setActiveTab(tab);
     setIsModalVisible(true);
@@ -499,7 +508,9 @@ export default function HomePage() {
 
 
             <TabPane tab="Register" key="register">
-              <Form layout="vertical" className="mt-4">
+              <Form layout="vertical" className="mt-4" initialValues={{ 
+                userType: "USER", // Default User Type to USER
+              }}>
                 {/* Register Email */}
                 <Form.Item  label="Email" name="email"
                             rules={[  { required: true, message: "Please input your email!" },
@@ -510,12 +521,12 @@ export default function HomePage() {
 
                 {/* Register Password */}
                 <Form.Item  label="Password" name="password"
-                            rules={[  { required: true, message: "Please input your password!" },
-                                      { min: 8, message: "Password must be at least 8 characters!",}]}>
+                            rules={passwordRules}>
                   <Input.Password prefix={<LockOutlined className="text-gray-400" />}
                                   placeholder="Create a password"/>
                 </Form.Item>
 
+                {/* Register Password Repeat */}
                 <Form.Item  label="Confirm Password" name="confirm" dependencies={["password"]} hasFeedback
                             rules={[  { required: true, message: "Please confirm your password!" },
                                       // Custom validator to check passwords match
@@ -527,11 +538,12 @@ export default function HomePage() {
                                           return Promise.reject(new Error("Passwords do not match!"));
                                         },
                                       })]}>
-                    <Input.Password />
+                    <Input.Password prefix={<LockOutlined className="text-gray-400" />}
+                                    placeholder="Repeat password"/>
                 </Form.Item>
 
                 {/* User Type */}
-                <Form.Item  label="User Type" name="userType"
+                <Form.Item  label="License Type" name="userType" style={{ marginBottom: 0 }}
                             rules={[{ required: true, message: 'Please select a user type!' }]}>
                   <Select placeholder="Select a user type">
                     {USER_TYPES.map(type => (
@@ -542,40 +554,29 @@ export default function HomePage() {
                   </Select>
                 </Form.Item>
               <Form.Item>
-              
-              <Button type="primary" htmlType="submit" block>
-                Register
-              </Button>
-              
-              </Form.Item>
 
+              </Form.Item>
                 <div className="mb-4 p-3 bg-gray-50 rounded-md text-sm text-gray-600">
                   <p className="font-medium mb-2">Password must contain:</p>
                   <ul className="space-y-1">
                     <li className="flex items-center">
-                      <CheckCircleOutlined className="text-green-500 mr-2" />
-                      At least 8 characters
+                      <CheckCircleOutlined className="text-green-500 mr-2" />At least 8 characters
                     </li>
                     <li className="flex items-center">
-                      <CheckCircleOutlined className="text-green-500 mr-2" />
-                      At least one uppercase letter
+                      <CheckCircleOutlined className="text-green-500 mr-2" />At least one uppercase letter
                     </li>
                     <li className="flex items-center">
-                      <CheckCircleOutlined className="text-green-500 mr-2" />
-                      At least one number
+                      <CheckCircleOutlined className="text-green-500 mr-2" />At least one number
                     </li>
                   </ul>
                 </div>
                 <Form.Item>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    block
-                    className="bg-indigo-600 hover:bg-indigo-700 border-none cursor-pointer !rounded-button whitespace-nowrap"
-                  >
+                  <Button type="primary" htmlType="submit" block 
+                          className="bg-indigo-600 hover:bg-indigo-700 border-none cursor-pointer !rounded-button whitespace-nowrap">
                     Create Account
                   </Button>
                 </Form.Item>
+                
                 <div className="text-center text-sm text-gray-600">
                   By signing up, you agree to our{" "}
                   <a href="#" className="text-indigo-600 hover:text-indigo-800 cursor-pointer">

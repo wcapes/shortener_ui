@@ -1,0 +1,177 @@
+
+Project: 	
+I want to build a website that is a URL shortner
+It is to have an API built on python
+
+Your Role:
+You are a developer of Business level applications over 40 years, and will help me build the API in Python and the front end in react and bootstrap.
+You are highly skilled in python and react and bootstrap.
+Use the internet for deep research, and to build the highest quality, fastest app
+
+Database
+> Use PostgreSQL database
+> User tracking - User registration and login, with JWT Tokens
+> User record is email, password, registered date, active, mode
+> For each Url we want to track, Date and Time of creation, Source URL, Shortened URL, number of clicks
+> For Business we want to track source ip's and locations of the click as well
+> Team Accounts / Multi-User Access: Allow an Business account to have multiple users under it, each potentially with different roles (admin, editor, viewer) for managing URLs.
+
+Python Libraries to use
+> stripe-python is the official SDK.
+> Use FastAPI
+> JWT Library: python-jose for FastAPI, PyJWT for general use.
+> Password Hashing: passlib.
+
+Different User Levels
+Free - 5 calls per minute 
+User - $1 per month
+     - 100 calls per minute
+Business - $10 per month
+         - Granular Click Data Visualization: Instead of just raw IPs/locations, provide interactive maps showing click origins, charts for clicks over time, by country, by city.
+		 - Referrer Tracking: Show where traffic to the shortened links is coming from.
+         - Device & Browser Tracking: Clicks by device type (desktop, mobile, tablet), OS, browser.
+         - UTM Parameter Generation & Tracking: Allow Business users to easily build UTM parameters into their source URLs and then see performance broken down by campaign, source, medium.
+         - Data Export: Ability to export click data (CSV, Excel) for offline analysis.
+         - Click Heatmaps (more advanced): For the source page if they own it and can add a script (might be a separate product, but conceptually related).
+         - Unlimited shorten urls
+Enterprise - $25 per month
+           - All of Business and User
+	       - Custom Domains
+           - Branded Redirect Pages - this rule is different for Enterprise clients ONLY - Make it an option for enterprise clients
+           - Webhooks: Allow Business users to configure webhooks to be notified of events (e.g., a link reaches X clicks, a new link is created by a team member).
+           - Dedicated API Keys: Separate from user JWTs, for programmatic access with higher rate limits (or truly unlimited as per your spec, though be careful with "unlimited").
+           - Unlimited shorten urls
+		   - URL Tagging/Organization: Folders or tags to organize large numbers of shortened URLs.
+		   - Bulk URL Shortening: Upload a CSV of URLs to shorten them all at once, also have a endpoint to upload multiple urls in a list
+		   - Editable Destination URLs: Allow them to change the target URL of an existing short link (USER tier might not have this, or only for a limited time).
+		   
+API Endpoints required
+> Shorten
+  - Accepts a Post command, and Json body with Token & SourceURL entries
+  - Post includes Token, and SourceUrl and returns a shortened URL
+  No token (missing Authorization header) = anonymous. Apply IP-based rate limiting for anonymous shortening. The 5 URLs/day for FREE applies to registered FREE users. Anonymous users might have a much lower, IP-based daily limit or no persistent daily limit other than rate limits.
+  - If token is empty string, treat as FREE user mode
+> Register
+  - User modes are FREE (5 url's shortened per day), USER ( 50 Url's per day ), Business ( unlimited )
+  - User modes for Rate Limiting 
+> veryif
+  - Verify users registration
+  - This needs to be a URL mailed to a user when they register.
+  - The url will have a payload parameter that is unique to the Email supplied and is an encoded string that no-one else can use
+> Login
+  - Login by email and password
+> Information
+> History, with paging mechanisms of 25 entries at a time, sort by date and time, and have a filter entry that filters on Source or Shortened URL
+  - History must have a parameter to determine what we sort out, Date/Time, Source Url, Shortened Url
+> Information endpoint to get detals about the logged in user
+
+Rules of the System:
+- The site must have the shortened url as <SOURCE SITE>\redirect\<SHORTENED CODE> and do the redirect without the user seeing a flicker or anything funny, must go straight to the source url
+- The redirect itself must be a server-side HTTP 301 (Permanent) or 302 (Found/Temporary) redirect. 301 is usually preferred for shortened URLs as it signals to search engines that the content has permanently moved.
+- Performance is everything for the UI and API
+- Security needs to be based on the logged in users level.
+- The ShortUrl is generated with Base62 Encoding: Take an auto-incrementing integer ID from the URL table and convert it to a base62 string (a-z, A-Z, 0-9). This guarantees uniqueness and produces short, clean codes.
+
+User Interface: General Information
+> We want a UI built with the following rules, in react using bootstrap latest version ( check the internet )
+> Efficient state management
+> code splitting
+> lazy loading
+> optimized bundle sizes
+> Site must handle Web and Mobile devices
+> HttpOnly cookies are generally preferred for storing JWTs - Given "enterprise level" and "security," strive for HttpOnly cookies. 
+> Email support channel
+
+User Interface: For FREE
+- have a text box dialog with a button to capture the source url.
+- A register and login button on the toolbar
+- A register and login page is required as well, to capture the fields that the API requires.
+- Have another text box where a free user can drop their shortened url, either  the full url or the shortened part of the url to get statistics
+- Provide a section for ads
+- Give information about registering for USER and Business
+
+User Interface: For USER
+- Same as for Free, except the toolbar has a log out button.
+- Have a grid under the main controls that shows the last
+- Show the User level on the Toolbar in the middle of the page
+- Application title on the toolbar on the Left.
+- Show history grid that supports all features of the History Api Endpoint
+- Provide a section for ads
+
+User Interface: For Business
+- No ads
+
+User Interface: Admin interface
+- Show all users and their levels
+- Allow enabling and disabling of users
+- Track their payments
+- Track their url's
+
+NOTES:
+I need a break down to setup all supporting platforms a libraries - How to setup database, Install all python requirements in VS Code, Setup UI application in VS Code, Setting up Stripe on Stripe site and in my application
+
+Other notes to consider:
+> Billing: We want to use stripe, implement all requirements
+> Include installation instructions for DAtabase, API and UI tools used
+> Api MUST run asynchroniously and so much the Database access layer to handle a heavy load and multiple connections
+> HTTPS Everywhere: Enforce HTTPS for all communication.
+> Password Hashing: Use a strong, salted hashing algorithm (e.g., Argon2, scrypt, bcrypt) for passwords. Never store plain text passwords
+> Input Validation & Sanitization: Protect against XSS, SQL Injection (though ORMs help with SQLi), etc., on both API and frontend.
+> CSRF Protection: For any state-changing operations initiated from the frontend.
+> API: Consistent error response format (e.g., {"error": "message", "details": "..."}). Proper HTTP status codes (400, 401, 403, 404, 429, 500).
+> Logging: Comprehensive logging (requests, errors, significant events) for debugging and auditing. Structured logging (e.g., JSON) is helpful.
+> Investigate Caching: Redis for frequently accessed data (e.g., popular short URL mappings, user session data, rate limiting counters).
+> Stateless API: Design API servers to be stateless so you can easily scale them horizontally.
+> Consider email server/how to send emails for registration, url creation etc etc etc
+> Add versioning to Api
+> Api endpoints require documentation
+> Business users -> Allow Business users to define their own short codes (vanity URLs). This adds complexity (uniqueness checks, reserved words).
+> Business Users -> delete or edit their shortened URLs
+> Only Business and Enterprise users can use the Api to do their thing, FREE and USER must use our UI to access the application endpoints
+> Form Handling: React Hook Form or Formik.
+> API Calls: axios or fetch API, with a centralized service for API calls.
+> Responsiveness: Ensure it works well on all screen sizes - Use MUI library
+> Anonymous FREE Users: Truly anonymous URL shortening is supported
+
+User Interface: For FREE
+"textbox ... to get statistics":
+Clarification: What statistics? Just click count? If the URL was created anonymously, how are stats retrieved?
+Suggestion: If FREE users must register, then they'd see stats in their history view like USER tier, but perhaps with fewer details. If anonymous creation is allowed, perhaps a public stats page for any short URL, showing only click count.
+Ads: Consider how ads will be served (e.g., Google AdSense).
+User Interface: For USER
+"Grid under the main controls that shows the last...":
+Clarification: Last created URLs? How many?
+Suggestion: This could be the first page of the history grid, pre-loaded.
+Toolbar:
+Application Title (Left), User Level (Middle), Logout (Right) - Sounds good.
+History Grid:
+Client-side or server-side pagination/sorting/filtering? For larger datasets, server-side is better. Your API supports this, so use it.
+Table component that supports these features.
+Each row could have actions: copy short URL, view stats (if stats are on a separate page/modal), delete URL.
+User Interface: For Business
+No ads - good.
+Missing: UI for Business-specific features.
+Displaying IP/location data for clicks in the history grid or a detailed view. This could involve maps (e.g., Leaflet.js, Google Maps API) or charts.
+Managing API keys (if implemented).
+Possibly managing custom short codes. - Remember to check for reserved words/paths (e.g., 'admin', 'api', 'register').
+Billing/Subscription management page.
+All User Tiers:
+Password Reset Flow: Pages for "Forgot Password" (enter email), "Reset Password" (enter new password after clicking email link).
+User Profile Page: To change password, maybe update email (with re-verification).
+Terms of Service & Privacy Policy Pages: Essential.
+
+> Build any and all endpoints required for these features 
+> Add Stripe and token fields to the database as required
+> Define Clicks Table Schema: For detailed analytics
+
+> Let's use Mailjet for Email service provider - remember setup instructions
+> Use geoip2 by MaxMind for GeoIP & User-Agent Parsing
+
+OAuth social logins.
+Admin dashboard UI.
+Link expiration features.
+Multi-language support.
+
+
+Consider anything I have missed and implement this into our code
+

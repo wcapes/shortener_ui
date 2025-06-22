@@ -96,6 +96,48 @@ export default function HomePage() {
     setIsModalVisible(false);
   };
 
+  const handleRegister = async (values) => {
+    try {
+      const res = await fetch(`${apiBaseUrl}/users/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: values.email,
+          password: values.password,
+          user_level: values.userType || "USER",
+        }),
+      });
+          const result = await res.json();
+
+    if (!res.ok) {
+      // Check for API error with code and message
+      if (result?.error?.code) {
+        notification.error({
+          message: "Registration Failed",
+          description: result.error.message,
+        });
+      } else {
+        notification.error({
+          message: "Registration Failed",
+          description: result.message || "An error occurred.",
+        });
+      }
+      return;
+    }
+
+    notification.success({
+      message: "Account Created",
+      description: "You have successfully registered. Please log in.",
+    });
+    form.resetFields();
+    } catch (e) {
+      notification.error({
+        message: "Registration Failed",
+        description: e.message,
+      });
+    }
+  };
+
   const handleShortenUrl = async () => {
     console.log("Starting");
     if (!url || !isValidUrl(url)) {
@@ -128,7 +170,7 @@ export default function HomePage() {
       console.log(`${apiBaseUrl}/shorten`);
       console.log(payload);
 
-      const res = await fetch(`${apiBaseUrl}/shorten`, {
+      const res = await fetch(`${apiBaseUrl}/urls/shorten`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -510,7 +552,7 @@ export default function HomePage() {
             <TabPane tab="Register" key="register">
               <Form layout="vertical" className="mt-4" initialValues={{ 
                 userType: "USER", // Default User Type to USER
-              }}>
+              }}  onFinish={handleRegister}>
                 {/* Register Email */}
                 <Form.Item  label="Email" name="email"
                             rules={[  { required: true, message: "Please input your email!" },
@@ -576,7 +618,7 @@ export default function HomePage() {
                     Create Account
                   </Button>
                 </Form.Item>
-                
+
                 <div className="text-center text-sm text-gray-600">
                   By signing up, you agree to our{" "}
                   <a href="#" className="text-indigo-600 hover:text-indigo-800 cursor-pointer">

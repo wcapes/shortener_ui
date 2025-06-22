@@ -61,7 +61,7 @@ const App: React.FC = () => {
     // Simulate API call
     setTimeout(() => {
       setShortenedUrl(
-        `https://short.ly/${Math.random().toString(36).substring(2, 8)}`,
+        `https://Snipzo/${Math.random().toString(36).substring(2, 8)}`,
       );
       setIsLoading(false);
     }, 1000);
@@ -140,7 +140,7 @@ const App: React.FC = () => {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center max-w-7xl">
           <div className="flex items-center">
             <LinkOutlined className="text-indigo-600 text-3xl mr-2" />
-            <span className="text-2xl font-bold text-gray-800">Short.ly</span>
+            <span className="text-2xl font-bold text-gray-800">Snipzo</span>
           </div>
           <nav className="hidden md:flex space-x-8">
             <a
@@ -204,7 +204,7 @@ const App: React.FC = () => {
               Transform Long URLs into Short, Powerful Links
             </h1>
             <p className="text-xl text-gray-100 mb-8">
-              Short.ly helps you create concise, trackable links that work
+              Snipzo helps you create concise, trackable links that work
               perfectly across all platforms. Get started for free.
             </p>
             <div className="bg-white p-6 rounded-lg shadow-lg">
@@ -319,7 +319,7 @@ const App: React.FC = () => {
               <div className="h-48 bg-gray-50 rounded-lg p-4">
                 <div className="bg-white p-3 rounded border border-gray-200 mb-3">
                   <div className="flex items-center">
-                    <span className="text-gray-500 mr-2">short.ly/</span>
+                    <span className="text-gray-500 mr-2">Snipzo/</span>
                     <span className="text-indigo-600 font-medium">
                       summer-sale
                     </span>
@@ -327,7 +327,7 @@ const App: React.FC = () => {
                 </div>
                 <div className="bg-white p-3 rounded border border-gray-200 mb-3">
                   <div className="flex items-center">
-                    <span className="text-gray-500 mr-2">short.ly/</span>
+                    <span className="text-gray-500 mr-2">Snipzo/</span>
                     <span className="text-indigo-600 font-medium">
                       product-launch
                     </span>
@@ -335,7 +335,7 @@ const App: React.FC = () => {
                 </div>
                 <div className="bg-white p-3 rounded border border-gray-200">
                   <div className="flex items-center">
-                    <span className="text-gray-500 mr-2">short.ly/</span>
+                    <span className="text-gray-500 mr-2">Snipzo/</span>
                     <span className="text-indigo-600 font-medium">
                       my-portfolio
                     </span>
@@ -363,7 +363,7 @@ const App: React.FC = () => {
                     <div className="flex flex-col md:flex-row items-center">
                       <div className="md:w-1/2 p-8">
                         <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                          Boost Your Marketing with Short.ly Pro
+                          Boost Your Marketing with Snipzo Pro
                         </h3>
                         <p className="text-gray-600 mb-6">
                           Get advanced analytics, unlimited custom links, and
@@ -380,7 +380,7 @@ const App: React.FC = () => {
                       <div className="md:w-1/2">
                         <img
                           src="https://readdy.ai/api/search-image?query=A%20professional%20marketing%20dashboard%20showing%20analytics%20and%20URL%20shortening%20statistics%20with%20charts%20and%20graphs%2C%20in%20a%20clean%20modern%20interface%20with%20blue%20accent%20colors%2C%20on%20a%20simple%20white%20background&width=600&height=400&seq=ad1&orientation=landscape"
-                          alt="Short.ly Pro Dashboard"
+                          alt="Snipzo Pro Dashboard"
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -582,7 +582,7 @@ const App: React.FC = () => {
               Trusted by Thousands of Companies
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              See why businesses of all sizes choose Short.ly for their link
+              See why businesses of all sizes choose Snipzo for their link
               management needs.
             </p>
           </div>
@@ -642,7 +642,7 @@ const App: React.FC = () => {
                     <i className="fas fa-star"></i>
                   </div>
                   <p className="text-gray-600 mb-6 flex-grow">
-                    "Short.ly has transformed how we manage our marketing
+                    "Snipzo has transformed how we manage our marketing
                     campaigns. The analytics are incredibly detailed and help us
                     optimize our strategy."
                   </p>
@@ -733,7 +733,7 @@ const App: React.FC = () => {
                     <i className="fas fa-star"></i>
                   </div>
                   <p className="text-gray-600 mb-6 flex-grow">
-                    "The API integration allowed us to build Short.ly directly
+                    "The API integration allowed us to build Snipzo directly
                     into our content management system. Our team loves the
                     seamless workflow."
                   </p>
@@ -926,7 +926,7 @@ const App: React.FC = () => {
           </h2>
           <p className="text-xl text-indigo-100 mb-8 max-w-3xl mx-auto">
             Join thousands of marketers, content creators, and businesses who
-            trust Short.ly for their link management needs.
+            trust Snipzo for their link management needs.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Button
@@ -955,7 +955,7 @@ const App: React.FC = () => {
             <div>
               <div className="flex items-center mb-4">
                 <LinkOutlined className="text-indigo-400 text-2xl mr-2" />
-                <span className="text-xl font-bold text-white">Short.ly</span>
+                <span className="text-xl font-bold text-white">Snipzo</span>
               </div>
               <p className="mb-4">
                 Powerful URL shortening with advanced analytics and
@@ -1088,7 +1088,7 @@ const App: React.FC = () => {
           <div className="border-t border-gray-800 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <div className="mb-4 md:mb-0">
-                <p>&copy; 2025 Short.ly. All rights reserved.</p>
+                <p>&copy; 2025 Snipzo. All rights reserved.</p>
               </div>
               <div className="flex space-x-4">
                 <i className="fab fa-cc-visa text-2xl"></i>

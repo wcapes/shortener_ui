@@ -1,71 +1,111 @@
 import React, { useState } from "react";
-import { Form, Input, Button, Alert, Typography } from "antd";
-import { MailOutlined, LockOutlined } from "@ant-design/icons";
-import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Card, Button, Form, Input, Typography, message } from "antd";
+import { Link } from "react-router-dom";
+import api from "../services/api";
+
+const { Title, Paragraph } = Typography;
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const [form] = Form.useForm();
+  const [shortUrl, setShortUrl] = useState("");
   const [loading, setLoading] = useState(false);
-  const [apiError, setApiError] = useState(null);
-  const navigate = useNavigate();
 
-  const onFinish = async (values) => {
+  // Quick shorten handler
+  const handleShorten = async (values) => {
     setLoading(true);
-    setApiError(null);
+    setShortUrl("");
     try {
-      await login(values.email, values.password);
-      navigate("/dashboard");
+      // Adjust API call as needed for your backend
+      const res = await api.post("/shorten", { url: values.url });
+      setShortUrl(res.data.shortUrl);
     } catch (err) {
-      setApiError(
-        err.response?.data?.error ||
-        err.response?.data?.detail ||
-        "Login failed"
-      );
-    } finally {
-      setLoading(false);
+      message.error("Failed to shorten URL. Please try again.");
     }
+    setLoading(false);
+  };
+
+  // Login handler (pseudo-code, fill in with your logic)
+  const handleLogin = async (values) => {
+    // Your login logic here
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="bg-white p-8 rounded shadow-lg max-w-md w-full">
-        <Typography.Title level={2} className="text-center mb-6">Log In</Typography.Title>
-        <Form layout="vertical" onFinish={onFinish} requiredMark={false}>
-          <Form.Item
-            label="Email"
-            name="email"
-            rules={[
-              { required: true, message: "Please input your email!" },
-              { type: "email", message: "Please enter a valid email!" },
-            ]}
-          >
-            <Input prefix={<MailOutlined />} />
-          </Form.Item>
-          <Form.Item
-            label="Password"
-            name="password"
-            rules={[{ required: true, message: "Please input your password!" }]}
-          >
-            <Input.Password prefix={<LockOutlined />} />
-          </Form.Item>
-          {apiError && <Alert type="error" message={apiError} showIcon />}
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              block
-              loading={loading}
-              className="bg-indigo-600 hover:bg-indigo-700 border-none !rounded-button whitespace-nowrap"
+    <div className="flex flex-col items-center min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 p-4">
+      <Card className="w-full max-w-xl mt-16 shadow-lg">
+        <div className="text-center mb-6">
+          <Title level={2}>Welcome to Snipzo!</Title>
+          <Paragraph>
+            <b>Instantly shorten links for free.</b> No account needed to try. 
+            <br />
+            <span className="text-emerald-600 font-medium">Sign up</span> for even more features!
+          </Paragraph>
+        </div>
+
+        {/* Try it now quick-Snipzo */}
+        <Card className="mb-8 bg-blue-50 border-none" title="Try it now! Shorten a link instantly">
+          <Form layout="inline" onFinish={handleShorten}>
+            <Form.Item
+              name="url"
+              rules={[
+                { required: true, message: "Paste a URL to shorten" },
+                { type: "url", message: "Must be a valid URL" },
+              ]}
             >
+              <Input placeholder="Paste your long URL here" style={{ width: 280 }} />
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit" loading={loading}>
+                Shorten
+              </Button>
+            </Form.Item>
+          </Form>
+          {shortUrl && (
+            <div className="mt-2 text-green-600">
+              Short URL: <a href={shortUrl} target="_blank" rel="noopener noreferrer" className="underline">{shortUrl}</a>
+            </div>
+          )}
+        </Card>
+
+        {/* Login Form */}
+        <div className="text-center mb-4">
+          <Title level={4}>Login to manage your links</Title>
+        </div>
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleLogin}
+          className="mb-2"
+        >
+          <Form.Item
+            name="email"
+            label="Email"
+            rules={[{ required: true, message: "Please enter your email" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="password"
+            label="Password"
+            rules={[{ required: true, message: "Please enter your password" }]}
+          >
+            <Input.Password />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block>
               Log In
             </Button>
           </Form.Item>
         </Form>
-        <div className="text-center">
-          <a href="/register" className="text-indigo-600 hover:text-indigo-800">Don't have an account? Register</a>
+        <div className="flex justify-between">
+          <Link to="/forgot" className="text-blue-500">Forgot password?</Link>
+          <span>
+            New to Snipzo?{" "}
+            <Link to="/register" className="text-emerald-600 font-bold">
+              Register for free!
+            </Link>
+          </span>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

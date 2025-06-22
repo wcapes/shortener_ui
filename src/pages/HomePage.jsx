@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import PricingCard from "../components/PricingCard";
+import { PRICING_TIERS } from "../constants/pricingTiers";
 import {
   Button,
   Input,
@@ -45,6 +47,7 @@ import "swiper/css/pagination";
 
 const { Title, Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 echarts.use([
   LineChart,
@@ -61,6 +64,7 @@ export default function HomePage() {
   const [shortenedUrl, setShortenedUrl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [url, setUrl] = useState("");
+  const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
   const showModal = (tab) => {
@@ -73,17 +77,63 @@ export default function HomePage() {
   };
 
   const handleShortenUrl = async () => {
+    console.log("Starting");
     if (!url) return;
     setIsLoading(true);
+    console.log(apiBaseUrl);
+
     try {
+      // Prepare payload
+      const payload = {
+        source_url: url,
+      };
+
+      // Only include custom_short_code if user is allowed and has entered it
+      console.log(userIsLoggedIn);
+
+      if (userIsLoggedIn && userTier !== "Free" && customShortCode) {
+        console.log("Logged in -> Adding Custom Short Code");
+        payload.custom_short_code = customShortCode;
+      }
+
       // Call your backend API for shortening
-      const res = await api.post("/shorten", { url });
-      setShortenedUrl(res.data.shortUrl || res.data.short_url || "Shortened!");
+      console.log(url);
+      console.log(`${apiBaseUrl}/shorten`);
+      console.log(payload);
+
+      const res = await fetch(`${apiBaseUrl}/shorten`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // If using JWT for auth, include the token
+          ...(userIsLoggedIn && {
+            Authorization: `Bearer ${userToken}`,
+          }),
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setShortenedUrl(data.shortUrl || data.short_url || "Shortened!");
+      } else {
+        // Handle error response
+        setShortenedUrl(null);
+        // Optionally, show error message to user
+      }
     } catch (e) {
+      console.log("*** Error");
+      console.log(e);
       setShortenedUrl(null);
     }
+
     setIsLoading(false);
   };
+
+
+
+
 
   const handleCopy = () => {
     if (shortenedUrl) {
@@ -245,10 +295,20 @@ export default function HomePage() {
             </div>
             {shortenedUrl && (
               <div className="mt-4 p-2 bg-white rounded text-indigo-700 font-bold inline-flex items-center gap-2 shadow">
-                <span>{shortenedUrl}</span>
-                <Button size="small" onClick={handleCopy}>Copy</Button>
-              </div>
+              <span>{shortenedUrl}</span>
+              <Button
+                type="primary"
+                size="small"
+                onClick={handleCopy}
+                loading={isLoading}
+                className="ml-2 px-6 bg-indigo-700 hover:bg-indigo-800 border-none font-semibold"
+                data-testid="shorten-btn"
+              >
+                Copy
+              </Button>
+            </div>
             )}
+            
           </div>
         </div>
       </section>
@@ -336,7 +396,27 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ... (other sections remain as in your provided template, or can be added as needed) ... */}
+      {/* Pricing Section */}
+      <section id="pricing" className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4 max-w-7xl">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Simple, Transparent Pricing
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Choose the plan that fits your needs, from personal use to enterprise-grade link management.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            {PRICING_TIERS.map((tier, i) => (
+              <PricingCard key={tier.name} {...tier} />
+            ))}
+          </div>
+          <p className="mt-8 text-sm text-gray-500 text-center">
+            * Click heatmaps require source page integration. Contact us for more details.
+          </p>
+        </div>
+      </section>
 
       {/* Auth Modal */}
       <Modal

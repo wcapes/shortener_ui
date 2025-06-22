@@ -516,9 +516,22 @@ export default function HomePage() {
                                   placeholder="Create a password"/>
                 </Form.Item>
 
+                <Form.Item  label="Confirm Password" name="confirm" dependencies={["password"]} hasFeedback
+                            rules={[  { required: true, message: "Please confirm your password!" },
+                                      // Custom validator to check passwords match
+                                      ({ getFieldValue }) => ({
+                                        validator(_, value) {
+                                          if (!value || getFieldValue("password") === value) {
+                                            return Promise.resolve();
+                                          }
+                                          return Promise.reject(new Error("Passwords do not match!"));
+                                        },
+                                      })]}>
+                    <Input.Password />
+                </Form.Item>
 
-                <Form.Item  label="User Type"
-                            name="userType"
+                {/* User Type */}
+                <Form.Item  label="User Type" name="userType"
                             rules={[{ required: true, message: 'Please select a user type!' }]}>
                   <Select placeholder="Select a user type">
                     {USER_TYPES.map(type => (
@@ -528,12 +541,13 @@ export default function HomePage() {
                     ))}
                   </Select>
                 </Form.Item>
-
-      <Form.Item>
-        <Button type="primary" htmlType="submit" block>
-          Register
-        </Button>
-      </Form.Item>
+              <Form.Item>
+              
+              <Button type="primary" htmlType="submit" block>
+                Register
+              </Button>
+              
+              </Form.Item>
 
                 <div className="mb-4 p-3 bg-gray-50 rounded-md text-sm text-gray-600">
                   <p className="font-medium mb-2">Password must contain:</p>
